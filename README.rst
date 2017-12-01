@@ -16,3 +16,44 @@
 
 Setuptools Changelog
 ====================
+
+This project is a setuptools extension which helps to generate change logs from
+fragments. This way of changelog management is conflict free, what is extremely
+helpful for PR/MR driven workflow.
+
+
+Requirements
+------------
+
+- Python 2.7, 3.5+
+- setuptools (modern versions)
+
+
+Why not `towncrier`_?
+---------------------
+
+Mostly, by personal reasons:
+
+1. ``pyproject.toml`` is cool, but still far future. I don't want to have yet
+   another project configuration file to support. This project is an extension
+   for setuptools and integrates with it transparently.
+
+2. I like when file extension reflects it format and is not a tool specific
+   magic.
+
+3. Sometimes, changes comes without issue number. These should be rendered
+   as is while fragment name is used to simplify navigation.
+
+4. Personally, I don't keep in mind all the issue numbers and remember what
+   changes when, so having some short mnemonic in filename helps a lot in
+   navigation.
+
+5. I'd like to cooperate fragment-based changelog management with automatic
+   project version control. For instance, if we did (and document) breaking
+   change, next version must have major number bump. Can I do this with
+   `towncrier`_? Unlikely.
+
+N. Finally, why not? (:
+
+
+.. _towncrier: https://github.com/hawkowl/towncrier

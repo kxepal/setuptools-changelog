@@ -25,6 +25,12 @@ SPHINXOPTS ?= -n -W
 all: help
 
 
+.PHONY: changelog
+# target: changelog - Prints out upcoming release changelog
+changelog:
+	@python setup.py -q changelog
+
+
 .PHONY: check
 # target: check - Checks project with the tests, linters and the rest tools
 check: check-lint check-coverage
