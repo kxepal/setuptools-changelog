@@ -16,6 +16,7 @@
 
 import os
 import re
+import sys
 from collections import OrderedDict, namedtuple
 from itertools import chain, groupby
 from urllib.parse import urlparse
@@ -113,6 +114,16 @@ class ChangeLog(Command):
         return OrderedDict(acc)
 
     def run(self):
+        if not os.path.exists(self.changelog_fragments_path):
+            self.warn('{} directory does not exists'
+                      ''.format(self.changelog_fragments_path))
+            sys.exit(1)
+
+        if not os.path.isdir(self.changelog_fragments_path):
+            self.warn('{} is not a directory'
+                      ''.format(self.changelog_fragments_path))
+            sys.exit(1)
+
         def group_by_type(fragments, known_changes_types):
             def by_type(item):
                 return item.type
