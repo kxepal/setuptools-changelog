@@ -14,6 +14,7 @@
 # limitations under the License.
 #
 
+import datetime
 import os
 import re
 import sys
@@ -22,6 +23,7 @@ from distutils.errors import DistutilsOptionError
 from itertools import chain, groupby
 from urllib.parse import urlparse
 
+import semver
 from setuptools import Command
 
 
@@ -163,13 +165,45 @@ class ChangeLog(Command):
             self.patch_changes_types,
         ))
 
-        for chtype, fragments in group_by_type(fragments, changes_types):
+        orig_version = self.distribution.get_version()
+        match = re.match(
+            r'^(?P<major>(?:0|[1-9][0-9]*))'
+            r'\.(?P<minor>(?:0|[1-9][0-9]*))'
+            r'(?:\.(?P<patch>(?:0|[1-9][0-9]*)))?',
+            orig_version,
+            re.VERBOSE,
+        )
+        if match is None:
+            raise RuntimeError('Version {} could not be used for SemVer'
+                               ''.format(orig_version))
+        groups = match.groupdict()
+        qual_version = '.'.join([
+            groups['major'], groups['minor'], groups['patch'] or '0'
+        ])
+
+        next_version = None
+        for chtype, _ in group_by_type(fragments, changes_types):
+            if chtype in self.major_changes_types:
+                next_version = semver.bump_major(qual_version)
+            elif chtype in self.minor_changes_types:
+                next_version = semver.bump_minor(qual_version)
+            elif chtype in self.patch_changes_types:
+                next_version = semver.bump_patch(qual_version)
+            break
+        assert next_version is not None
+
+        today = datetime.datetime.now().date()
+        title = '{} ({})'.format(next_version, today)
+        title += '\n' + '=' * len(title)
+        content.insert(0, title)
+
+        for chtype, fragments_group in group_by_type(fragments, changes_types):
             header_title = self.all_changes_types[chtype]
             header_line = '-' * len(header_title)
 
             chunks = []
             references = []
-            for fragment in fragments:
+            for fragment in fragments_group:
                 match = re.match(self.issue_pattern, fragment.name)
                 if match:
                     issue_number = match.group(0)

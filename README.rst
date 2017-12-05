@@ -25,8 +25,18 @@ helpful for PR/MR driven workflow.
 Requirements
 ------------
 
-- Python 2.7, 3.5+
-- setuptools (modern versions)
+- Python 2.7, 3.5+;
+- setuptools (modern versions);
+- Your project follows `Semantic Versioning`_ or uses it simplified (``X.Y``
+  version) form;
+
+
+Automatic version generation
+----------------------------
+
+If your project follows `Semantic Versioning`_ strategy, you can achieve not
+just changelog generation, but also automatic version management depending on
+changes it has.
 
 
 Why not `towncrier`_?
@@ -56,4 +66,5 @@ Mostly, by personal reasons:
 N. Finally, why not? (:
 
 
+.. _Semantic Versioning: https://semver.org/
 .. _towncrier: https://github.com/hawkowl/towncrier
