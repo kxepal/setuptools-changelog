@@ -18,6 +18,7 @@ import os
 import re
 import sys
 from collections import OrderedDict, namedtuple
+from distutils.errors import DistutilsOptionError
 from itertools import chain, groupby
 from urllib.parse import urlparse
 
@@ -94,6 +95,12 @@ class ChangeLog(Command):
         self.patch_changes_types = self._parse_changes_types(
             self.patch_changes_types
         )
+
+        if self.patch_changes_types and not self.minor_changes_types:
+            raise DistutilsOptionError(
+                'Patch changes are defined while minor are not.'
+            )
+
         self.all_changes_types = {}
         self.all_changes_types.update(self.major_changes_types)
         self.all_changes_types.update(self.minor_changes_types)
