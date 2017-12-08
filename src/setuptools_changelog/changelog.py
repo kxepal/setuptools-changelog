@@ -65,6 +65,11 @@ class ChangeLog(Command):
          ' tries to detect GitHub usage to build correct issue URL. Custom URL'
          ' may be be used in format: http://host/path/%s'
          ' where %s is a placeholder for issue number.'),
+        ('next-version', None,
+         'Prints next release version to stdout.'),
+    ]
+    boolean_options = [
+        'next-version',
     ]
 
     changelog_fragments_path = None
@@ -75,6 +80,7 @@ class ChangeLog(Command):
     major_changes_types = None
     minor_changes_types = None
     patch_changes_types = None
+    next_version = False
 
     def initialize_options(self):
         url = self.distribution.get_url().strip('/')
@@ -191,6 +197,10 @@ class ChangeLog(Command):
                 next_version = semver.bump_patch(qual_version)
             break
         assert next_version is not None
+
+        if self.next_version:
+            print(next_version)
+            return
 
         today = datetime.datetime.now().date()
         title = '{} ({})'.format(next_version, today)
