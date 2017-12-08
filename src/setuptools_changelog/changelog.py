@@ -67,6 +67,8 @@ class ChangeLog(Command):
          ' where %s is a placeholder for issue number.'),
         ('next-version', None,
          'Prints next release version to stdout.'),
+        ('update=', None,
+         'Prepends generated changelog to specified file.'),
     ]
     boolean_options = [
         'next-version',
@@ -81,6 +83,7 @@ class ChangeLog(Command):
     minor_changes_types = None
     patch_changes_types = None
     next_version = False
+    update = None
 
     def initialize_options(self):
         url = self.distribution.get_url().strip('/')
@@ -246,4 +249,14 @@ class ChangeLog(Command):
         new_changes = '\n\n'.join(content)
         new_changes += '\n\n' + '\n'.join(sorted(footer))
 
-        print(new_changes.strip())
+        if self.update is None:
+            print(new_changes.strip())
+        else:
+            changelog_path = self.update  # rename for readability
+            if os.path.exists(changelog_path):
+                with open(changelog_path) as fobj:
+                    content = fobj.read()
+            else:
+                content = ''
+            with open(changelog_path, 'w') as fobj:
+                fobj.write(new_changes + '\n' + content)
