@@ -59,8 +59,16 @@ clean:
 	@rm -f .coverage
 	@rm -rf {build,htmlcov,cover,coverage}
 	@rm -rf src/*.egg-info
+	@rm -f RELEASE
 	@rm -f VERSION
 	@python setup.py clean
+
+
+.PHONY: commit-changelog
+commit-changelog:
+	@python setup.py changelog --update=CHANGELOG.rst
+	@git rm changelog.d/*.rst
+	@git commit CHANGELOG.rst changelog.d/*.rst -m "Release `cat VERSION`"
 
 
 .PHONY: coverage-report
@@ -96,6 +104,17 @@ distcheck: sdist
 	@. dist/$(PN)/venv/bin/activate && $(MAKE) -C dist/$(PN) develop
 	@. dist/$(PN)/venv/bin/activate && $(MAKE) -C dist/$(PN) check
 	@rm -rf dist/$(PN)
+
+
+.PHONY: ensure-clean
+ensure-clean:
+	@git diff --exit-code
+	@git diff --cached --exit-code
+
+
+.PHONY: ensure-tag
+ensure-tag:
+	@git describe --exact-match --tags $(git log -n1 --pretty='%h')
 
 
 .PHONY: format
@@ -149,10 +168,31 @@ purge:
 	@git clean -xdff
 
 
+.PHONY: release
+# target: release - Makes a new release
+release: ensure-clean \
+         distcheck \
+         release-notes \
+         dist \
+         commit-changelog \
+         tag-release
+
+
+.PHONY: release-notes
+release-notes:
+	@python setup.py -q changelog > RELEASE
+	@$(EDITOR) RELEASE
+
+
 .PHONY: sdist
 # target: sdist - Builds source distribution artifact
 sdist: clean
 	@python setup.py sdist
+
+
+.PHONY: tag-release
+tag-release:
+	@git tag -F RELEASE `cat VERSION`
 
 
 # target: venv - Creates virtual environment
@@ -172,6 +212,12 @@ VERSION:
 # target: uninstall - Delete project installation
 uninstall:
 	@pip uninstall $(PN)
+
+
+.PHONY: upload
+# target: upload - Uploads artifacts on PyPI
+upload: ensure-clean ensure-tag sdist wheel
+	@python setup.py sdist bdist_wheel register upload
 
 
 .PHONY: wheel

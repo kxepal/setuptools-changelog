@@ -45,5 +45,6 @@ htmlcov/
 docs/_build
 
 # Project specifics
+RELEASE
 venv
 VERSION
