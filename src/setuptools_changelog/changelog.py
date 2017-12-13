@@ -27,6 +27,23 @@ import semver
 from setuptools import Command
 
 
+try:
+    from textwrap import indent
+except ImportError:  # pragma: no cover
+    # This function was borrowed from Python 3.6 sources.
+    def indent(text, prefix, predicate=None):
+        if predicate is None:
+            def _predicate(line):
+                return line.strip()
+            predicate = _predicate  # Pylint error workaround
+
+        def prefixed_lines():
+            for line in text.splitlines(True):
+                yield (prefix + line if predicate(line) else line)
+
+        return ''.join(prefixed_lines())
+
+
 class InvalidFragment(RuntimeError):
     def __init__(self, path, msg):
         super(InvalidFragment, self).__init__('`{}`. {}'.format(path, msg))
@@ -235,8 +252,9 @@ class ChangeLog(Command):
                 else:
                     issue_formatted, reference = '', None
 
-                chunk = '- {}'.format(issue_formatted) + '\n  '.join(
-                    line for line in fragment.body.splitlines()
+                chunk = '- {}{}'.format(
+                    issue_formatted,
+                    indent(fragment.body, '  ').strip()
                 )
                 chunks.append(chunk)
                 references.append(reference)
