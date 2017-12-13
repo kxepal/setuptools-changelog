@@ -44,6 +44,26 @@ except ImportError:  # pragma: no cover
         return ''.join(prefixed_lines())
 
 
+DEFAULT_CHANGELOG_FRAGMENTS_PATH = 'changelog.d'
+DEFAULT_MAJOR_CHANGES_TYPES = OrderedDict([
+    ('epic', 'Epic Changes'),
+    ('breaking', 'Breaking Changes'),
+])
+DEFAULT_MINOR_CHANGES_TYPES = OrderedDict([
+    ('security', 'Security Fixes'),
+    ('deprecation', 'Deprecations'),
+    ('feature', 'New Features'),
+])
+DEFAULT_PATCH_CHANGES_TYPES = OrderedDict([
+    ('bug', 'Bug Fixes'),
+    ('improvement', 'Improvements'),
+    ('build', 'Build'),
+    ('doc', 'Documentation'),
+    ('test', 'Tests Suite'),
+    ('misc', 'Miscellaneous'),
+])
+
+
 class InvalidFragment(RuntimeError):
     def __init__(self, path, msg):
         super(InvalidFragment, self).__init__('`{}`. {}'.format(path, msg))
@@ -113,17 +133,21 @@ class ChangeLog(Command):
             self.issue_tracker = None  # will be set via setuptools config
 
     def finalize_options(self):
-        assert self.changelog_fragments_path is not None
+        if self.changelog_fragments_path is None:
+            self.changelog_fragments_path = DEFAULT_CHANGELOG_FRAGMENTS_PATH
+
         self.major_changes_types = self._parse_changes_types(
-            self.major_changes_types
+            self.major_changes_types,
+            DEFAULT_MAJOR_CHANGES_TYPES,
         )
         self.minor_changes_types = self._parse_changes_types(
-            self.minor_changes_types
+            self.minor_changes_types,
+            DEFAULT_MINOR_CHANGES_TYPES,
         )
         self.patch_changes_types = self._parse_changes_types(
-            self.patch_changes_types
+            self.patch_changes_types,
+            DEFAULT_PATCH_CHANGES_TYPES,
         )
-
         if self.patch_changes_types and not self.minor_changes_types:
             raise DistutilsOptionError(
                 'Patch changes are defined while minor are not.'
@@ -134,12 +158,12 @@ class ChangeLog(Command):
         self.all_changes_types.update(self.minor_changes_types)
         self.all_changes_types.update(self.patch_changes_types)
 
-    def _parse_changes_types(self, changes_types):
+    def _parse_changes_types(self, changes_types, default):
         if isinstance(changes_types, dict):
             return changes_types
 
         if changes_types is None:
-            return {}
+            return default
 
         changes_types = changes_types.strip()
         if not changes_types:
