@@ -221,14 +221,14 @@ class ChangeLog(Command):
                 if match:
                     issue_number = match.group(0)
                     key = '{}{}'.format(self.issue_prefix, issue_number)
-                    issue_formatted = '`{}`_: '.format(key)
                     if self.issue_tracker is not None:
+                        issue_formatted = '`{}`_: '.format(key)
                         reference = '.. _{}: {}'.format(
                             key,
                             self.issue_tracker % issue_number,
                         )
                     else:
-                        reference = None
+                        issue_formatted, reference = key + ': ', None
                 else:
                     issue_formatted, reference = '', None
 
