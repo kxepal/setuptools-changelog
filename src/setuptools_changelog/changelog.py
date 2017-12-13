@@ -121,6 +121,9 @@ class ChangeLog(Command):
         if isinstance(changes_types, dict):
             return changes_types
 
+        if changes_types is None:
+            return {}
+
         changes_types = changes_types.strip()
         if not changes_types:
             return {}
