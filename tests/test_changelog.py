@@ -73,3 +73,33 @@ Bug Fixes
 '''.lstrip().format(
         today,
     )
+
+
+def test_next_major_version(make_changelog, major_changes, capsys):
+    changelog = make_changelog(
+        changelog_fragments_path=major_changes,
+        next_version=True
+    )
+    changelog.run()
+    stdout, _ = capsys.readouterr()
+    assert stdout == '1.0.0\n'
+
+
+def test_next_minor_version(make_changelog, minor_changes, capsys):
+    changelog = make_changelog(
+        changelog_fragments_path=minor_changes,
+        next_version=True
+    )
+    changelog.run()
+    stdout, _ = capsys.readouterr()
+    assert stdout == '0.1.0\n'
+
+
+def test_next_patch_version(make_changelog, patch_changes, capsys):
+    changelog = make_changelog(
+        changelog_fragments_path=patch_changes,
+        next_version=True
+    )
+    changelog.run()
+    stdout, _ = capsys.readouterr()
+    assert stdout == '0.0.1\n'

@@ -1,1 +1,1 @@
-Add some basic tests for changelog generation.
+Add some basic tests for changelog and next version generation.
