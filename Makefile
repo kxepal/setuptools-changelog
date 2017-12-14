@@ -140,6 +140,19 @@ format-diff:
 	    src/ \
 	    tests/
 
+
+.PHONY: fragment
+# target: fragment - Generates changelog fragment using name and type parameters and commits it
+fragment: new-fragment
+	@git commit changelog.d/$(name).$(type).rst
+
+
+.PHONY: fragment-amend
+# target: fragment-amend - Like target `fragment`, but amends file to HEAD commit
+fragment-amend: new-fragment
+	@git commit --amend changelog.d/$(name).$(type).rst
+
+
 .PHONY: help
 # target: help - Prints this help
 help:
@@ -153,6 +166,14 @@ help:
 # target: install - Install the project
 install:
 	@pip install .
+
+
+.PHONY: new-fragment
+new-fragment: name ?= `git rev-parse --short HEAD`
+new-fragment: type ?= misc
+new-fragment:
+	@git show -s --format=%B HEAD > changelog.d/$(name).$(type).rst
+	@git add changelog.d/$(name).$(type).rst
 
 
 .PHONY: pylint
