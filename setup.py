@@ -19,6 +19,7 @@ import os
 import subprocess
 
 from setuptools import setup
+from setuptools.command.egg_info import egg_info as egg_info_orig
 from setuptools.command.sdist import sdist as sdist_orig
 
 
@@ -30,6 +31,7 @@ VERSION = os.path.join(ROOT, 'VERSION')
 def main():
     return setup(
         cmdclass={
+            'egg_info': egg_info,
             'sdist': sdist,
         },
         version=project_version(),
@@ -67,6 +69,18 @@ def project_version():
         raise RuntimeError('cannot detect project version')
 
     return version
+
+
+class egg_info(egg_info_orig):
+
+    def _ensure_stringlike(self, option, what, default=None):
+        val = getattr(self, option)
+        if val is None:
+            setattr(self, option, default)
+            return default
+        elif isinstance(val, (type(''), type(u''))):
+            return val
+        return egg_info_orig._ensure_stringlike(self, option, what, default)
 
 
 class sdist(sdist_orig):
