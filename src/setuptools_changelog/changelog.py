@@ -21,7 +21,6 @@ import sys
 from collections import OrderedDict, namedtuple
 from distutils.errors import DistutilsOptionError
 from itertools import chain, groupby
-from urllib.parse import urlparse
 
 import semver
 from setuptools import Command
@@ -29,7 +28,10 @@ from setuptools import Command
 
 try:
     from textwrap import indent
+    from urllib.parse import urlparse
 except ImportError:  # pragma: no cover
+    from urlparse import urlparse
+
     # This function was borrowed from Python 3.6 sources.
     def indent(text, prefix, predicate=None):
         if predicate is None:

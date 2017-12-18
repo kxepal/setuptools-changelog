@@ -45,7 +45,7 @@ def project_version():
         try:
             output = subprocess.check_output(
                 ['git', 'describe', '--tags', '--always'],
-                stderr=subprocess.DEVNULL,
+                stderr=open(os.devnull, 'wb'),
             ).strip().decode()
         except subprocess.CalledProcessError:
             # Can't read the tag. That's probably project at initial stage,
