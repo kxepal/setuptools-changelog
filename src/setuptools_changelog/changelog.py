@@ -19,7 +19,6 @@ import os
 import re
 import sys
 from collections import OrderedDict, namedtuple
-from distutils.errors import DistutilsOptionError
 from itertools import chain, groupby
 
 import semver
@@ -151,7 +150,7 @@ class ChangeLog(Command):
             DEFAULT_PATCH_CHANGES_TYPES,
         )
         if self.patch_changes_types and not self.minor_changes_types:
-            raise DistutilsOptionError(
+            raise RuntimeError(
                 'Patch changes are defined while minor are not.'
             )
 

@@ -72,7 +72,7 @@ def project_version():
 
 
 class egg_info(egg_info_orig):
-
+    # https://github.com/PyCQA/pylint/issues/73
     def _ensure_stringlike(self, option, what, default=None):
         val = getattr(self, option)
         if val is None:
