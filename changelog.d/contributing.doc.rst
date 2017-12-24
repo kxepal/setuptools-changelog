@@ -1,0 +1,2 @@
+Add contributing guide
+
