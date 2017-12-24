@@ -26,7 +26,7 @@ Requirements
 ------------
 
 - Python 2.7, 3.5+;
-- setuptools (modern versions);
+- setuptools (31+, but the latest release is better);
 - Your project follows `Semantic Versioning`_ or uses it simplified (``X.Y``
   version) form;
 
