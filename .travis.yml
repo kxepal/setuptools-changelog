@@ -23,8 +23,6 @@ python:
   - 3.6
 
 install:
-  - make venv
-  - source venv/bin/activate
   - make develop
 
 script:
