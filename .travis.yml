@@ -25,4 +25,5 @@ install:
   - make develop
 
 script:
+  - make changelog
   - make distcheck
