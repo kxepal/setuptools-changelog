@@ -78,5 +78,10 @@ def patch_changes():
 
 
 @pytest.fixture(scope='session')
+def no_changes():
+    return os.path.join(os.path.dirname(__file__), 'empty')
+
+
+@pytest.fixture(scope='session')
 def today():
     return datetime.datetime.now().date()

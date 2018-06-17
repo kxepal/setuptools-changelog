@@ -246,6 +246,11 @@ class ChangeLog(Command):
                 for item in items if item.endswith('.rst')
             ]
 
+        if not fragments:
+            self.warn('No fragments found in {} directory'
+                      ''.format(self.changelog_fragments_path))
+            sys.exit(1)
+
         changes_types = list(chain(
             self.major_changes_types,
             self.minor_changes_types,

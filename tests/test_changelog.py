@@ -1,5 +1,5 @@
 #
-# Copyright 2017, Alexander Shorin
+# Copyright 2018, Alexander Shorin
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,6 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+
+import pytest
 
 
 def test_major_changes(make_changelog, major_changes, capsys, today):
@@ -73,6 +76,15 @@ Bug Fixes
 '''.lstrip().format(
         today,
     )
+
+
+def test_no_changes(make_changelog, no_changes):
+    changelog = make_changelog(
+        changelog_fragments_path=no_changes,
+        next_version=True
+    )
+    with pytest.raises(SystemExit):
+        changelog.run()
 
 
 def test_next_major_version(make_changelog, major_changes, capsys):
