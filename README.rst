@@ -1,5 +1,5 @@
 ..
-.. Copyright 2017, Alexander Shorin
+.. Copyright 2018, Alexander Shorin
 ..
 .. Licensed under the Apache License, Version 2.0 (the "License");
 .. you may not use this file except in compliance with the License.
@@ -122,12 +122,14 @@ Example configuration for ``setup.cfg`` using defaults:
     major_changes_types =
         epic = Epic Changes
         breaking = Breaking Changes
+        removal = Breaking Changes
     minor_changes_types =
         security = Security Fixes
         deprecation = Deprecations
         feature = New Features
     patch_changes_types =
         bug = Bug Fixes
+        bugfix = Bug Fixes
         improvement = Improvements
         build = Build
         doc = Documentation
@@ -143,31 +145,36 @@ just changelog generation, but also automatic version management depending on
 changes it has.
 
 
-Why not `towncrier`_?
----------------------
+Integration with `towncrier`_
+-----------------------------
 
-Mostly, by personal reasons:
+This project was started because there are several reasons for me to not use
+`towncrier`_ for changelog management. But
 
-1. ``pyproject.toml`` is cool, but still far future. I don't want to have yet
-   another project configuration file to support. This project is an extension
-   for setuptools and integrates with it transparently.
+.. epigraph::
 
-2. I like when file extension reflects it format and is not a tool specific
-   magic.
+   Why have enemies, when you can have?
 
-3. Sometimes, changes comes without issue number. These should be rendered
-   as is while fragment name is used to simplify navigation.
+   -- King Arthur: Legend of the Sword
 
-4. Personally, I don't keep in mind all the issue numbers and remember what
-   changes when, so having some short mnemonic in filename helps a lot in
-   navigation.
+Instead, we can support fragments, made for towncrier with the following
+config:
 
-5. I'd like to cooperate fragment-based changelog management with automatic
-   project version control. For instance, if we did (and document) breaking
-   change, next version must have major number bump. Can I do this with
-   `towncrier`_? Unlikely.
+.. code::
 
-N. Finally, why not? (:
+    [changelog]
+    changelog_fragments_path = changelog.d
+    major_changes_types =
+        removal = Breaking Changes
+    minor_changes_types =
+        feature = New Features
+    patch_changes_types =
+        bugfix = Bug Fixes
+        doc = Documentation
+        misc = Miscellaneous
+    use_towncrier = true
+
+And that's it!
 
 
 .. _Semantic Versioning: https://semver.org/

@@ -1,5 +1,5 @@
 #
-# Copyright 2017, Alexander Shorin
+# Copyright 2018, Alexander Shorin
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -53,10 +53,12 @@ DEFAULT_MAJOR_CHANGES_TYPES = OrderedDict([
 DEFAULT_MINOR_CHANGES_TYPES = OrderedDict([
     ('security', 'Security Fixes'),
     ('deprecation', 'Deprecations'),
+    ('removal', 'Deprecations'),
     ('feature', 'New Features'),
 ])
 DEFAULT_PATCH_CHANGES_TYPES = OrderedDict([
     ('bug', 'Bug Fixes'),
+    ('bugfix', 'Bug Fixes'),
     ('improvement', 'Improvements'),
     ('build', 'Build'),
     ('doc', 'Documentation'),
@@ -89,6 +91,25 @@ class Fragment(namedtuple('Fragment', ['path', 'name', 'body', 'type'])):
             return cls(path, name, body, type_)
 
 
+class TowncrierFragment(Fragment):
+    __slots__ = ()
+
+    @classmethod
+    def from_path(cls, path):
+        try:
+            name, type_ = os.path.basename(path).rsplit('.')
+        except ValueError:
+            raise InvalidFragment(
+                path,
+                'Fragment filename name must have name, fragment type and'
+                ' proper extension parts joined by a dot.',
+            )
+        else:
+            with open(path) as fobj:
+                body = fobj.read()
+            return cls(path, name, body, type_)
+
+
 class ChangeLog(Command):
     user_options = [
         ('changelog-fragments-path=', None,
@@ -105,6 +126,8 @@ class ChangeLog(Command):
          ' where %s is a placeholder for issue number.'),
         ('next-version', None,
          'Prints next release version to stdout.'),
+        ('use-towncrier', None,
+         'Reuses fragments made for towncrier.'),
         ('update=', None,
          'Prepends generated changelog to specified file.'),
     ]
@@ -122,6 +145,7 @@ class ChangeLog(Command):
     patch_changes_types = None
     next_version = False
     update = None
+    use_towncrier = False
 
     def initialize_options(self):
         url = self.distribution.get_url().strip('/')
@@ -210,8 +234,17 @@ class ChangeLog(Command):
 
         base_path = self.changelog_fragments_path
         items = sorted(os.listdir(base_path))
-        fragments = [Fragment.from_path(os.path.join(base_path, item))
-                     for item in items if item.endswith('.rst')]
+
+        if self.use_towncrier:
+            fragments = [
+                TowncrierFragment.from_path(os.path.join(base_path, item))
+                for item in items if not item.startswith('.')
+            ]
+        else:
+            fragments = [
+                Fragment.from_path(os.path.join(base_path, item))
+                for item in items if item.endswith('.rst')
+            ]
 
         changes_types = list(chain(
             self.major_changes_types,
