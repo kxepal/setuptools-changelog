@@ -67,6 +67,7 @@ clean:
 .PHONY: commit-changelog
 commit-changelog:
 	@python setup.py changelog --update=CHANGELOG.rst
+	@python setup.py -q changelog --next-version > VERSION
 	@git rm changelog.d/*.rst
 	@git add CHANGELOG.rst
 	@git commit CHANGELOG.rst changelog.d/*.rst -m "Release `cat VERSION`"
