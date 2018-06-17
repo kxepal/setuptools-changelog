@@ -1,2 +1,0 @@
-Drop Python 2.7 build on Travis CI. I'm not interested in it, but if it'll
-be broken - patches welcome!
