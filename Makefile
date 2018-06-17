@@ -215,7 +215,7 @@ sdist: clean
 
 .PHONY: tag-release
 tag-release:
-	@git tag -F RELEASE `cat VERSION`
+	@git tag -s -F RELEASE `cat VERSION`
 
 
 # target: venv - Creates virtual environment
