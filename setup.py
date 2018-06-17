@@ -56,7 +56,7 @@ def project_version():
                 base, distance, commit_hash = output.split('-')
             except ValueError:
                 # We're on release tag.
-                pass
+                version = output
             else:
                 # Reformat git describe for PEP-440
                 version = '{}.{}+{}'.format(base, distance, commit_hash)
