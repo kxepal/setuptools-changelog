@@ -35,7 +35,7 @@ Contributing
 
        git checkout --branch changelog-generation-bugfix
 
-    If you're fixing an issue, start the branch name with it number::
+  If you're fixing an issue, start the branch name with it number::
 
         git checkout --branch 42-docs-typo
 

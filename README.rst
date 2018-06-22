@@ -153,7 +153,7 @@ This project was started because there are several reasons for me to not use
 
 .. epigraph::
 
-   Why have enemies, when you can have?
+   Why have enemies, when you can have friends?
 
    -- King Arthur: Legend of the Sword
 
